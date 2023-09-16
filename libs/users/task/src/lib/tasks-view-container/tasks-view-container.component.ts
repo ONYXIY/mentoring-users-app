@@ -1,11 +1,14 @@
 import { IColumn } from '@users/users/task/data-access';
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule, NgFor } from '@angular/common';
 import { TasksViewComponent } from '../tasks-view/tasks-view.component';
 
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { TasksStore } from './tasks-list-container.store';
+import { ThemeSwitchService } from '@users/users/core/ui/theme-switch';
+import { PushPipe } from '@ngrx/component';
+
 
 @Component({
   selector: 'users-tasks-container',
@@ -16,13 +19,17 @@ import { TasksStore } from './tasks-list-container.store';
     NgFor,
     FormsModule,
     MatButtonModule,
+    PushPipe
   ],
   templateUrl: './tasks-view-container.component.html',
   styleUrls: ['./tasks-view-container.component.scss'],
   providers: [TasksStore],
 })
 export class TasksContainerComponent {
-  constructor(private tasksStore: TasksStore) {}
+  private readonly tasksStore = inject(TasksStore);
+  public readonly switchMode = inject(ThemeSwitchService);
+
+  public colorMode$ = this.switchMode.isDarkTheme$;
   public columns$ = this.tasksStore.columns$;
   public columns!: IColumn[];
 
